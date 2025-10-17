@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="calc.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Calculator</title>
+</head>
+<body id="canvas">
+    <h1 id="heading">Simple Calculator</h1>
+    <center>
+    <div id="calbody">
+        <input type="text" id="display"><br><br>
+        <div class="buttons">
+            <button class="num-btn" data-value="7">7</button>
+            <button class="num-btn" data-value="8">8</button>
+            <button class="num-btn" data-value="9">9</button>
+            <button class="op-btn" data-value="/">÷</button>
+            <br>
+            <button class="num-btn" data-value="4">4</button>
+            <button class="num-btn" data-value="5">5</button>
+            <button class="num-btn" data-value="6">6</button>
+            <button class="op-btn" data-value="x">x</button>
+            <br>
+            <button class="num-btn" data-value="1">1</button>
+            <button class="num-btn" data-value="2">2</button>
+            <button class="num-btn" data-value="3">3</button>
+            <button class="op-btn" data-value="-">-</button>
+            <br>
+            <button class="num-btn" data-value=".">.</button>
+            <button class="num-btn" data-value="0">0</button>
+            <button class="c-btn" data-value="c">C</button>
+            <button class="op-btn" data-value="+">+</button>
+            <br>
+            <button class="ans-btn" data-value="=">=</button>
+        </div>
+    </div></center>
+    <script>
+         let currentvalue = "";
+         let operation = null;
+         let firstvalue = null;
+         $(document).ready(function(){
+            var btnSound = $("#btnSound")[0];
+            var errSound = $("#errSound")[0];
+    
+            $(".num-btn").click(function(){
+                if(currentvalue === "Error"){
+                    currentvalue = "";
+                    $("#display").val("");
+                }
+                let value = $(this).data("value");
+                currentvalue += value;
+                if(firstvalue !== null && operation !== null){
+                    $("#display").val(firstvalue + " " + operation + " " + currentvalue);
+                } else {
+                    $("#display").val(currentvalue);
+                }
+                btnSound.currentTime = 0;
+                btnSound.play();
+            });
+    
+            $(".op-btn").click(function(){
+                if(currentvalue === "Error"){
+                    currentvalue = "";
+                    $("#display").val("");
+                }
+               
+                if(firstvalue !== null && operation !== null && currentvalue !== ""){
+                    let secondvalue = parseFloat(currentvalue);
+                    let result;
+                    switch(operation){
+                        case "+":
+                            result = firstvalue + secondvalue;
+                            break;
+                        case "-":
+                            result = firstvalue - secondvalue;
+                            break;
+                        case "x":
+                            result = firstvalue * secondvalue;
+                            break;
+                        case "/":
+                            if(secondvalue === 0){
+                                result = "Error";
+                            } else {
+                                result = firstvalue / secondvalue;
+                            }
+                            break;
+                    }
+                    $("#display").val(result);
+                    if(result === "Error"){
+                        errSound.currentTime = 0;
+                        errSound.play();
+                      
+                        currentvalue = "";
+                        firstvalue = null;
+                        operation = null;
+                        return;
+                    }
+                    firstvalue = result;
+                    operation = $(this).data("value");
+                    $("#display").val(firstvalue + " " + operation + " ");
+                    currentvalue = "";
+                    btnSound.currentTime = 0;
+                    btnSound.play();
+                }
+                
+                else if(currentvalue === "" && firstvalue !== null && operation !== null){
+                    operation = $(this).data("value");
+                    $("#display").val(firstvalue + " " + operation + " ");
+                    btnSound.currentTime = 0;
+                    btnSound.play();
+                }
+               
+                else if(currentvalue !== ""){
+                    firstvalue = parseFloat(currentvalue);
+                    operation = $(this).data("value");
+                    $("#display").val(currentvalue + " " + operation + " ");
+                    currentvalue = "";
+                    btnSound.currentTime = 0;
+                    btnSound.play();
+                }
+            });
+    
+            $(".c-btn").click(function(){
+                currentvalue = "";
+                firstvalue = null;
+                operation = null;
+                $("#display").val('');
+                btnSound.currentTime = 0;
+                btnSound.play();
+            });
+        
+            $(".ans-btn").click(function(){
+                if(firstvalue !== null && currentvalue !== ""){
+                    let secondvalue = parseFloat(currentvalue);
+                    let result;
+                    switch(operation){
+                        case "+":
+                            result = firstvalue + secondvalue;
+                            break;
+                        case "-":
+                            result = firstvalue - secondvalue;
+                            break;
+                        case "x":
+                            result = firstvalue * secondvalue;
+                            break;
+                        case "/":
+                            if(secondvalue === 0){
+                                result = "Error";
+                            } else {
+                                result = firstvalue / secondvalue;
+                            }
+                            break;
+                    }
+                    $("#display").val(result);
+                    if(result === "Error"){
+                        errSound.currentTime = 0;
+                        errSound.play();
+                    }
+                    else{
+                        btnSound.currentTime = 0;
+                        btnSound.play();
+                    }
+                    currentvalue = result.toString();
+                    firstvalue = null;
+                    operation = null;
+                }
+            });
+         });
+    </script>
+    <audio id="btnSound" preload="auto">
+        <source src="sound/button.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="errSound" preload="auto">
+        <source src="sound/error.mpeg" type="audio/mpeg">
+    </audio>
+    <nav>
+        <a href="calculator.html">Home</a>|
+        <a href="about.html">About</a>|
+        <a href="feedback.html">Feedback</a>
+    </nav>
+</body>
+</html>
